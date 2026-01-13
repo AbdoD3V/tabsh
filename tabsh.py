@@ -5,9 +5,16 @@ from translations import commands
 import subprocess
 import utils
 import os
-from prompt_toolkit import PromptSession
-import prompt_toolkit
-from prompt_toolkit.history import FileHistory
+try:
+    from prompt_toolkit import PromptSession
+    import prompt_toolkit
+    from prompt_toolkit.history import FileHistory
+    HAVE_PROMPT_TOOLKIT = True
+except Exception:
+    PromptSession = None
+    prompt_toolkit = None
+    FileHistory = None
+    HAVE_PROMPT_TOOLKIT = False
 import sys
 from handle_scripts import script_handler
 from rc_handler import handle_rc
@@ -23,6 +30,7 @@ if not os.path.exists(".tabshrc"):
         f.write("clear")
         f.close()
 
+
 init(True)
 
 # For directory tracking
@@ -34,14 +42,17 @@ script_handler(curr_dir, sys.argv)
 
 safe_history_file = os.path.expanduser("~/.config/.tabshhistory")
 
-try:
-    history = FileHistory(safe_history_file)
-except PermissionError:
-    from prompt_toolkit.history import InMemoryHistory
-    history = InMemoryHistory()
 
-# command history and cycling
-session = PromptSession(history=history, editing_mode=prompt_toolkit.enums.EditingMode.VI)
+if HAVE_PROMPT_TOOLKIT:
+    try:
+        history = FileHistory(safe_history_file)
+    except PermissionError:
+        from prompt_toolkit.history import InMemoryHistory
+        history = InMemoryHistory()
+    session = PromptSession(history=history, editing_mode=prompt_toolkit.enums.EditingMode.VI)
+else:
+    history = []
+    session = None
 
 # to be written to .tabshhistory
 command_history = []
@@ -72,6 +83,14 @@ while True:
     translated_cmd = utils.replace_all_keywords(cmd, commands) 
     base = translated_cmd.split()[0]
 
+    # apply aliases (aliases are stored using translated command names)
+    if base in aliases:
+        alias_expansion = aliases[base]
+        rest = '' if len(parts) == 1 else ' ' + ' '.join(parts[1:])
+        translated_cmd = alias_expansion + rest
+        parts = translated_cmd.split()
+        base = parts[0]
+
     if base == "cd": # Handle directory changes safely
         parts = translated_cmd.split(maxsplit=1)
         path = parts[1] if len(parts) > 1 else os.path.expanduser("~")
@@ -87,7 +106,8 @@ while True:
             print(Fore.RED + f"cd: permission denied: {path}")
     else:
         try:
-            subprocess.run(translated_cmd, shell=True)
+            shell_exe = os.environ.get('SHELL', '/bin/sh')
+            subprocess.run(translated_cmd, shell=True, executable=shell_exe)
         except Exception as e:
             print(Fore.RED + e) # error handling
 

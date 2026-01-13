@@ -39,27 +39,50 @@ printf "TABSHInstaller: What language would you like to continue in?\n"
 printf "TABSHInstaller: ما هي اللغة التي ترغب في الاستمرار بها؟\n"
 read -p '(english/عربي): ' lang
 
-if [[ "$lang" == "english" ]]; then
-	printf "TABSHInstaller: Installing dependencies from Pip\n"
-	pip3 install colorama prompt-toolkit &&
-	printf "TABSHInstaller: Downloading TABSH\n" &&
-	sudo git clone https://github.com/MOHAPY24/tabsh.git /usr/local/bin/tabsh &&
-	printf "TABSHInstaller: Making shell executable\n" &&
-	chmod +x /usr/local/bin/tabsh/tabsh.sh &&
-	printf "TABSHInstaller: Modifying $rc to automatically start TABSH\n" &&
-	printf "cd /usr/local/bin/tabsh && ./tabsh.sh" >> $rc &&
-	printf "Successfully installed! Starting...\n"
-	source $rc
-elif [[ "$lang" == "عربي" ]]; then
-        printf "TABSHInstaller: تثبيت التبعيات\n" &&
-        pip3 install colorama prompt-toolkit &&
-        printf "TABSHInstaller: تنزيل طبش\n" &&
-        git clone https://github.com/MOHAPY24/tabsh.git /usr/local/bin &&
-        printf "TABSHInstaller: جعل الصدفة قابلاً للتنفيذ\n" &&
-        chmod +x ~/tabsh/tabsh.sh &&
-	echo "cd /usr/local/bin/tabsh && ./tabsh.sh" >> "$rc" &&
-        printf "Successfully installed! Starting...\n"
-	source $rc
+if [[ "$lang" == "english" || "$lang" == "en" ]]; then
+  printf "TABSHInstaller: Installing dependencies from Pip\n"
+  if [ -f requirements.txt ]; then
+    pip3 install --user -r requirements.txt || {
+      printf "TABSHInstaller: pip install failed; try: pip3 install --user -r requirements.txt\n"
+      exit 1
+    }
+  else
+    pip3 install --user colorama prompt-toolkit || {
+      printf "TABSHInstaller: pip install failed; try installing packages manually.\n"
+      exit 1
+    }
+
+  printf "TABSHInstaller: Downloading TABSH\n"
+  sudo git clone https://github.com/MOHAPY24/tabsh.git /usr/local/bin/tabsh || {
+    printf "TABSHInstaller: git clone failed (maybe already installed).\n"
+  }
+  printf "TABSHInstaller: Making shell executable\n"
+  sudo chmod +x /usr/local/bin/tabsh/tabsh.sh || true
+  printf "TABSHInstaller: Adding launch line to %s\n" "$rc"
+  printf "# Start tabsh (optional): cd /usr/local/bin/tabsh && ./tabsh.sh\n" >> "$rc"
+  printf "Successfully installed. Start tabsh with: cd /usr/local/bin/tabsh && ./tabsh.sh\n"
+elif [[ "$lang" == "عربي" || "$lang" == "ar" ]]; then
+  printf "TABSHInstaller: تثبيت التبعيات\n"
+  if [ -f requirements.txt ]; then
+    pip3 install --user -r requirements.txt || {
+      printf "TABSHInstaller: فشل تثبيت pip؛ حاول: pip3 install --user -r requirements.txt\n"
+      exit 1
+    }
+  else
+    pip3 install --user colorama prompt-toolkit || {
+      printf "TABSHInstaller: فشل تثبيت pip؛ حاول تثبيت الحزم يدويًا.\n"
+      exit 1
+    }
+
+  printf "TABSHInstaller: تنزيل طبش\n"
+  sudo git clone https://github.com/MOHAPY24/tabsh.git /usr/local/bin/tabsh || {
+    printf "TABSHInstaller: فشل git clone (ربما مثبت بالفعل).\n"
+  }
+  printf "TABSHInstaller: جعل الصدفة قابلاً للتنفيذ\n"
+  sudo chmod +x /usr/local/bin/tabsh/tabsh.sh || true
+  printf "TABSHInstaller: إضافة سطر تشغيل اختياري إلى %s\n" "$rc"
+  printf "# بدء tabsh (اختياري): cd /usr/local/bin/tabsh && ./tabsh.sh\n" >> "$rc"
+  printf "تم التثبيت بنجاح. ابدأ tabsh باستخدام: cd /usr/local/bin/tabsh && ./tabsh.sh\n"
 else
-	printf "TABSHInstaller: invalid option\n"
+  printf "TABSHInstaller: invalid option\n"
 fi

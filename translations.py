@@ -1,21 +1,6 @@
 #!/usr/bin/env python3
+
 commands = {
-
-    # Helpful reminders for all translation contributors:
-    # 1. Arabic is a lingustically painful language to mix two words the same
-    #    way English does for these commands. If you need to translate a command
-    #    like "hyperctl" for example, don't hesitate to add a dash between the two
-    #    words in Arabic (the prefix "هايبر" and the suffix "تحكم", making "هايبر-تحكم").
-
-    # 2. It's fine if you want to translate a command verbosely, but please don't overdo it.
-    #    TABSH is meant to be a way for Arabic beginners to experience Bash in a user
-    #    friendly way, so if you don't capture the meaning of a command in one word, you can
-    #    extend it to 2-3 words. But do NOT make it a chore to type in a single command, as
-    #    most Arabic people (even I lol) feel like it is tiring to type in large amounts of
-    #    text.
-
-    # - Written by yours truly, KMA
-
     # File and Directory Management
     "عدد": "ls",
     "غير": "cd",
@@ -112,12 +97,8 @@ commands = {
     "صحيح": "true",
     "خطا": "false",
 
-    # Hyprland utils (Section added 20/10/25) ("I use MATE btw" -kma)
-    # Friendly reminder that the prefix "-هايبر" should be used before every "hypr-" command
+    # Hyprland utilities
     "هايبر-تحكم": "hyprctl",
     "هايبر-خلفية": "hyprpaper",
-    "هايبر-صور": "hyprshot"
-
-    # "Ooh eeh ooh ah ah, ting tang wala wala bang bang!"
-    #                                - Witch Doctor, 1998
+    "هايبر-صور": "hyprshot",
 }

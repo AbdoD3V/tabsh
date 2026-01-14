@@ -49,5 +49,3 @@ EOF
 
 ./tabsh.sh /tmp/tabsh_test.txt
 ```
-
-If you'd like, I can also add a packaged `make` or `setup` target to build the optional native utilities.

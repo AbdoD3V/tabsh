@@ -26,18 +26,8 @@ sudo chmod +x /usr/local/bin/tabsh
 # after this you can run `tabsh` from anywhere
 ```
 
+
 There is also an installer script `tabshinstaller.sh` that tries to set up the environment and copy files into `/usr/local/bin` — review it before running.
-
-Notes on native utilities
-- Optional native helpers live under `native/` and are not required. The Python `utils.replace_all_keywords` will attempt to call the C# `keyword_replacer` (via `dotnet run` or a built DLL) if present, otherwise it falls back to the pure-Python implementation.
-
-To build the C# replacer (optional, requires .NET SDK 7):
-
-```bash
-cd native/csharp
-dotnet build -c Release
-dotnet run --project . --configuration Release -- --map /path/to/mapping.json --cmd "echo hello && echo world"
-```
 
 Example script
 

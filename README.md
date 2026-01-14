@@ -1,28 +1,45 @@
 # TABSH
- ## The Arabic Bash Shell
- This project is still experimental and NOT reliable for daily use, yet.
- Fork of TABSH by MOHAPY24.
- A better README, improved functionaliy and reliability are coming soon
+## The Arabic Bash Shell
+This project is experimental. It provides a small shell-like wrapper around system commands and supports Arabic aliases/keywords.
 
-## Native utilities (optional)
+Basic build & run
+- Requirements: `python3` (3.8+), `pip`, and the packages in `requirements.txt`.
+- Install dependencies:
 
-This repo includes optional native utilities under `native/` that can accelerate some tasks.
+```bash
+pip3 install --user -r requirements.txt
+```
 
-- `native/csharp/` — a small C# `keyword_replacer` CLI that reads a JSON mapping and a command string and prints the translated command. `tabsh` will try to call this tool (via `dotnet run` or a built DLL) to apply keyword replacements before falling back to the Python implementation.
-- `native/` (future) — a Rust executor prototype that can run pipelines and `&&` groups; currently experimental.
+- Run directly (recommended for development):
 
-Build and run the C# replacer (requires .NET SDK 7):
+```bash
+./tabsh.sh        # runs the packaged shell script
+# or
+python3 tabsh.py  # run the Python entrypoint
+```
+
+- Install for system-wide use (put in `PATH`):
+
+```bash
+sudo cp tabsh.sh /usr/local/bin/tabsh
+sudo chmod +x /usr/local/bin/tabsh
+# after this you can run `tabsh` from anywhere
+```
+
+There is also an installer script `tabshinstaller.sh` that tries to set up the environment and copy files into `/usr/local/bin` — review it before running.
+
+Notes on native utilities
+- Optional native helpers live under `native/` and are not required. The Python `utils.replace_all_keywords` will attempt to call the C# `keyword_replacer` (via `dotnet run` or a built DLL) if present, otherwise it falls back to the pure-Python implementation.
+
+To build the C# replacer (optional, requires .NET SDK 7):
 
 ```bash
 cd native/csharp
 dotnet build -c Release
-# run with mapping and command
 dotnet run --project . --configuration Release -- --map /path/to/mapping.json --cmd "echo hello && echo world"
 ```
 
-If the C# tool is built as a DLL, `tabsh` will prefer calling it directly with `dotnet <dll>`.
-
-Example: run a small script with `tabsh`:
+Example script
 
 ```bash
 cat > /tmp/tabsh_test.txt <<'EOF'
@@ -30,5 +47,7 @@ echo start && echo ok
 echo foo | grep f
 EOF
 
-python3 tabsh.py /tmp/tabsh_test.txt
+./tabsh.sh /tmp/tabsh_test.txt
 ```
+
+If you'd like, I can also add a packaged `make` or `setup` target to build the optional native utilities.

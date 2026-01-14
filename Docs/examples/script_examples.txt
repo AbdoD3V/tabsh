@@ -1,0 +1,8 @@
+# Example tabsh scripts
+
+# simple AND and pipeline
+echo start && echo ok
+echo foo | grep f
+
+# cd and list
+cd /tmp && ls | head -n 3

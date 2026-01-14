@@ -13,7 +13,7 @@ def handle_rc(current_dir): # handle .tabshrc
     # TODO: get aliases to work
     script = ".tabshrc" # get rc file
     with open(script, 'r') as f:
-        aliases = []
+        aliases = {}
         scode = f.read().strip() # get rc contents without trailing newlines/whitespaces
         for cmd in scode.splitlines(): # for each line
             if not cmd:

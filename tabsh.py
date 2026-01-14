@@ -62,7 +62,7 @@ command_history = []
 r = open(os.path.expanduser("~/.config/.tabshhistory"), 'a')
 
 # rc_handler.py
-curr_dir, alias = handle_rc(curr_dir)
+curr_dir, aliases = handle_rc(curr_dir)
 
 while True:
     try:
@@ -81,7 +81,8 @@ while True:
 
     # utils.py
     translated_cmd = utils.replace_all_keywords(cmd, commands) 
-    base = translated_cmd.split()[0]
+    parts = translated_cmd.split()
+    base = parts[0]
 
     # apply aliases (aliases are stored using translated command names)
     if base in aliases:
